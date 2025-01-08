@@ -1,0 +1,306 @@
+\ProvidesPackage{book}
+
+\usepackage[leqno]{amsmath}
+\usepackage{amssymb,amsthm}
+\usepackage{mathrsfs,mathtools}
+\usepackage{enumerate,enumitem}
+\usepackage{titlesec}
+\usepackage{sectsty}
+\usepackage[titles]{tocloft}
+\usepackage{fancyhdr}
+\usepackage{caption}
+\usepackage{xcolor}
+\usepackage{index}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{changepage}
+\usepackage{old-arrows}
+\usepackage[numbered]{bookmark}
+\usepackage{hyphen}
+
+% Page layout and margins
+\usepackage[paperwidth=155mm,
+    paperheight=235mm,
+    top=25mm,
+    bottom=25mm,
+    inner=20mm,
+    outer=20mm,
+    headsep=5mm]{geometry}
+
+%--------------------------------------------------------------------------------%
+
+% Configure numbering to use section numbers
+\makeatletter
+% Chapter and section formatting
+\renewcommand{\thechapter}{\Roman{chapter}}
+\renewcommand{\thesection}{\arabic{section}}
+
+\renewcommand{\@seccntformat}[1]{%
+    \csname the#1\endcsname\space }
+
+\@addtoreset{equation}{section}
+\renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
+
+\@addtoreset{figure}{section}
+\renewcommand{\thefigure}{\arabic{section}.\arabic{figure}}
+\makeatother
+
+\captionsetup[figure]{name={FIGURE},labelsep=period,font=small}
+
+\sectionfont{\normalfont}
+\subsectionfont{\normalfont\itshape}
+
+\titleformat{\chapter}[display]%
+    {\huge}
+    {\Huge\thechapter}
+    {0.1em}
+    {\MakeUppercase}
+
+\renewcommand{\cftchappresnum}{Chapter }
+\renewcommand{\cftchapaftersnum}{.}
+\renewcommand{\cftsecaftersnum}{.}
+\cftsetindents{section}{4.7ex}{2.5ex}
+
+\newcommand{\hidechapterpagenumber}{%
+    \addtocontents{toc}{\protect\cftpagenumbersoff{chapter}}%
+}
+
+\newcommand{\showchapterpagenumber}{%
+    \addtocontents{toc}{\protect\cftpagenumberson{chapter}}%
+}
+\renewcommand{\cftchapafterpnum}{\vskip1.5ex}
+\renewcommand{\cftchapfont}{\normalfont}
+\renewcommand{\cftchappagefont}{\normalfont}
+\renewcommand{\cftchapdotsep}{\cftdotsep}
+\renewcommand{\cftchapleader}{\normalfont\cftdotfill{\cftchapdotsep}}
+
+\newcommand{\titlechapvspace}[1]{\titlespacing*{\chapter}{0em}{0em}{#1}}
+
+% Adjust indentation of the toc entries
+\makeatletter
+\renewcommand{\numberline}[1]{%
+  \@cftbsnum #1\@cftasnum~\@cftasnumb%
+}
+\makeatother
+
+%--------------------------------------------------------------------------------%
+
+\bookmarksetup{
+    addtohook={%
+        \ifnum\bookmarkget{level}=0%
+            \ifnum\value{chapter}>0%
+                \bookmarksetup{bold}%
+            \fi
+        \fi
+        \ifnum\bookmarkget{level}=2%
+            \bookmarksetup{italic}%
+        \fi
+    }}
+
+% Adjust bookmarks
+\makeatletter
+    \renewcommand\Hy@numberline[1]{#1. }
+\makeatother
+
+\newcommand{\notessection}{%
+    \section*{Notes}%
+    \renewcommand{\thesection}{}%
+    \markboth{\leftmark}{Notes}%
+}
+
+\newcommand{\mychapter}[1]{%
+    \chapter{\uptexstring{#1}}%
+    \renewcommand{\thesection}{\arabic{section}}%
+}
+
+\newcommand{\subsecbkm}[2]{%
+    \hypertarget{#1}{}%
+    \bookmark[level=2,dest=#1]{#2}%
+    \subsection*{#2}%
+}
+
+%--------------------------------------------------------------------------------%
+
+% Headers format
+\fancypagestyle{frontmatter}{%
+    \fancyhf{}
+    \fancyhead[LE]{\hbox to 1.67em{\thepage} \MakeUppercase{\leftmark}}
+    \fancyhead[RO]{\MakeUppercase{\rightmark} \hbox to 1.85em{\hfill\thepage}}
+    \renewcommand{\headrulewidth}{0em}
+}
+
+\fancypagestyle{mainmatter}{%
+    \fancyhf{}
+    \fancyhead[LE]{\hbox to 1.67em{\thepage} \thechapter. \MakeUppercase{\leftmark}}
+    \fancyhead[RO]{\thesection \space \rightmark \hbox to 1.85em{\hfill\thepage}}
+    \renewcommand{\headrulewidth}{0em}
+}
+
+\fancypagestyle{backatter}{%
+    \fancyhf{}
+    \fancyhead[LE]{\hbox to 1.67em{\thepage} \MakeUppercase{\leftmark}}
+    \fancyhead[RO]{\rightmark \hbox to 1.85em{\hfill\thepage}}
+    \renewcommand{\headrulewidth}{0em}
+}
+
+\newcommand{\frontmatterstyle}{%
+    \pagestyle{frontmatter}
+    \pagenumbering{roman}
+    \titlechapvspace{18em}
+}
+
+\newcommand{\mainmatterstyle}{%
+    \pagestyle{mainmatter}
+    \pagenumbering{arabic}
+    \titlechapvspace{16em}
+}
+
+\newcommand{\backmatterstyle}{%
+    \pagestyle{backatter}
+    \titlechapvspace{18em}
+}
+
+% Activate the fancy page style
+\pagestyle{fancy}
+
+% Define how chapter and section titles appear in the header
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{#1}}
+
+% For chapter first pages
+\fancypagestyle{plain}{%
+    \fancyhf{} % Clear header/footer
+    \renewcommand{\headrulewidth}{0em}
+}
+
+%--------------------------------------------------------------------------------%
+
+% Custom theorem formatting
+\newtheoremstyle{thmstyle}
+    {\topsep}   % Space above
+    {\topsep}   % Space below
+    {\itshape}  % Body font
+    {}          % Indent amount
+    {\bfseries} % Theorem head font
+    {}          % No punctuation after theorem head
+    {.5em}      % Space after theorem head
+    {\textbf{\thmnumber{(#2)} \thmname{#1.}}\thmnote{ \textnormal{(#3)}}} % Theorem head spec
+
+% Define theorem-style environments with custom numbering
+\theoremstyle{thmstyle}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+
+% Exercise formatting
+\newtheoremstyle{extyle}
+    {\topsep}   % Space above
+    {\topsep}   % Space below
+    {\normalfont}  % Body font
+    {}          % Indent amount
+    {\bfseries} % Theorem head font
+    {.}         % Punctuation after theorem head
+    {.5em}      % Space after theorem head
+    {\thmname{#1 }\thmnumber{#2}}
+
+\theoremstyle{extyle}
+\newtheorem{exercise}{Exercise}
+
+\newenvironment{obs}
+    {\refstepcounter{equation}%
+      \par\vspace{\baselineskip}\noindent%
+      \makebox[0pt][l]{\textnormal{(\theequation)}}\hspace{\widthof{(\theequation)\space}}}
+    {\par\vspace{\baselineskip}}
+
+\makeatletter
+\@addtoreset{exercise}{chapter}
+\renewcommand{\theexercise}{\arabic{exercise}}
+\makeatother
+
+%--------------------------------------------------------------------------------%
+
+\newcommand{\chapref}[2][]{\hyperref[#2]{#1.\getrefnumber{#2}}}
+\newcommand{\chapeqref}[2][]{\hyperref[#2]{(#1.\getrefnumber{#2})}}
+
+%--------------------------------------------------------------------------------%
+
+\let\Gamma\varGamma
+\let\Delta\varDelta
+\let\Theta\varTheta
+\let\Lambda\varLambda
+\let\Xi\varXi
+\let\Pi\varPi
+\let\Sigma\varSigma
+\let\Upsilon\varUpsilon
+\let\Phi\varPhi
+\let\Psi\varPsi
+\let\Omega\varOmega
+\let\epsilon\varepsilon
+
+%--------------------------------------------------------------------------------%
+
+% Mathematical operators and symbols
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\D}{\mathbb{D}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\renewcommand{\P}{\mathbb{P}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+
+\newcommand{\CC}{\mathcal{C}}
+\newcommand{\BC}{\mathcal{B}}
+\newcommand{\EC}{\mathcal{E}}
+\newcommand{\FC}{\mathcal{F}}
+\newcommand{\HC}{\mathcal{H}}
+\newcommand{\GC}{\mathcal{G}}
+\newcommand{\KC}{\mathcal{K}}
+\newcommand{\LC}{\mathcal{L}}
+\newcommand{\MC}{\mathcal{M}}
+\newcommand{\NC}{\mathcal{N}}
+\newcommand{\PC}{\mathcal{P}}
+\newcommand{\SC}{\mathcal{S}}
+
+\newcommand{\BMO}{\mathcal{BMO}}
+\renewcommand{\mid}{|}
+
+\newcommand{\csdot}{\,\cdot\,}
+\newcommand{\im}{\mathrm{i}}
+\newcommand{\lrang}[1]{\langle #1 \rangle}
+
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\diam}{diam}
+\DeclareMathOperator{\dist}{dist}
+\DeclareMathOperator{\Div}{div}
+\DeclareMathOperator{\Int}{int}
+\DeclareMathOperator*{\Osc}{Osc}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\trace}{trace}
+
+\let\Im\relax
+\let\Re\relax
+\DeclareMathOperator{\Im}{Im}
+\DeclareMathOperator{\Re}{Re}
+
+\newcommand{\hint}{\smallskip\textit{Hint:}~}
+\renewcommand{\eqref}[1]{(\ref{#1})}
+
+%--------------------------------------------------------------------------------%
+
+\renewcommand\bfdefault{b}
+\allowdisplaybreaks
+\setlength{\parindent}{2em}
+\setenumerate{left=0em .. \parindent, align=left, noitemsep, nolistsep, label=(\alph*)}
+
+\tolerance=10000
+\maxdepth=2.5mm
+
+\newif\ifmatchorig
+%\matchorigfalse
+\matchorigtrue
+\newcommand{\tweakpage}[1]{\ifmatchorig \enlargethispage{#1\baselineskip}\fi}
+\newcommand{\mpagebreak}{\ifmatchorig \pagebreak\noindent \fi}
+\newcommand{\mnewpage}{\ifmatchorig \newpage\noindent \fi}

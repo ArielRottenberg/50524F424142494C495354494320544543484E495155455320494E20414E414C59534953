@@ -1,0 +1,46 @@
+\documentclass[openany,10pt]{book}
+\usepackage{book,bibliography}
+\addbibresource{refs.bib}
+
+\begin{document}
+
+% Front matters
+\frontmatter
+\frontmatterstyle
+\title{\textsf{PROBABILISTIC TECHNIQUES IN ANALYSIS}}
+\author{\textsf{Richard F. Bass}}
+\date{\textsf{1995}}
+\maketitle
+
+\include{dedication}
+\include{preface}
+
+\hidechapterpagenumber
+
+\phantomsection
+\hypertarget{contents}{}
+\bookmark[level=0,dest=contents]{Contents}
+\tableofcontents
+
+% Main content
+\mainmatter
+\mainmatterstyle
+
+\include{ch1}
+\include{ch2}
+\include{ch3}
+\include{ch4}
+\include{ch5}
+
+% Bibliography and Index
+\setcounter{chapter}{0}
+\backmatterstyle
+\showchapterpagenumber
+
+\phantomsection
+\addcontentsline{toc}{chapter}{\uptexstring{Bibliography}}
+\printbibliography
+
+\printindex
+
+\end{document}

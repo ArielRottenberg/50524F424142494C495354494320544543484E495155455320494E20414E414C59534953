@@ -1,0 +1,60 @@
+\usepackage{imakeidx}
+% Note: this package should be loaded before "hyperref"!
+\usepackage{etoolbox}
+\usepackage{sphack}
+
+\makeatletter
+% Note: the following patch allows to use a temporary folder for auxiliary files
+\patchcmd{\imki@putindex}
+    {\imki@exec{\imki@program\imki@options #1.idx}}
+    {\imki@exec{\imki@program\imki@options tmp/#1.idx}}
+    {\message{Patch succeeded in imki@putindex}}
+    {\errmessage{Patch failed in imki@putindex}}
+\makeatother
+
+\makeatletter
+\renewcommand{\@idxitem}{\par\hangindent 10\p@}
+\renewcommand{\subitem}{\@idxitem \hspace*{10\p@}\hangindent 20\p@}
+
+\renewenvironment{theindex}
+    {\imki@maybeaddtotoc
+     \imki@indexlevel{\indexname}\imki@indexheaders
+     \thispagestyle{\imki@firstpagestyle}%
+     \ifnum\imki@columns>\@ne
+       \columnsep \imki@columnsep
+       \ifx\imki@idxprologue\relax
+         \begin{multicols}{\imki@columns}
+       \else
+         \begin{multicols}{\imki@columns}[\imki@idxprologue]
+       \fi
+     \else
+       \imki@idxprologue
+     \fi
+     \global\let\imki@idxprologue\relax
+     \parindent\z@
+     \parskip\z@ \@plus .3\p@\relax
+     \columnseprule \ifKV@imki@columnseprule.4\p@\else\z@\fi
+     \raggedright
+     \let\item\@idxitem
+     \imki@othercode
+     % Add phantom entry in first column
+     \phantom{\@idxitem}\par}
+    {\ifnum\imki@columns>\@ne\end{multicols}\fi}
+
+    \renewcommand{\index}[1]{%
+      \@bsphack
+      \protected@write\@indexfile{}{\string\indexentry{#1}{\thepage}}%
+      \@esphack
+    }
+\makeatother
+
+\begin{filecontents}[overwrite]{book.ist}
+    delim_0 "~"
+    delim_1 "~"
+\end{filecontents}
+
+\newcommand{\uptexstring}[1]{
+    \texorpdfstring{\unskip\MakeUppercase{#1}\ignorespaces}{#1}
+}
+
+\makeindex[intoc,columnsep=4.35em,title=\uptexstring{Index},options=-s tmp/book.ist]

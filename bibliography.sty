@@ -1,0 +1,128 @@
+\usepackage[backend=biber,
+            style=ext-authornumber-comp,
+            maxbibnames=5,
+            maxcitenames=5]{biblatex}
+
+\setlength{\bibnamesep}{0.4\baselineskip}
+\setlength{\bibhang}{3em}
+\renewcommand*{\bibnamedash}{}
+
+\DeclareDelimFormat[bib]{namenumberdelim}{\endgraf\nopagebreak\hspace{-\bibhang}}
+\DeclareDelimFormat[bib]{nametitledelim}{}
+\DeclareFieldFormat{bibextraname}{\makebox[\leftmargin][l]{\quad\mkbibbrackets{#1}}}
+
+\makeatletter
+\renewbibmacro*{bbx:dashcheck}[2]{%
+    \ifboolexpr{
+        test {\iffieldequals{fullhash}{\bbx@lasthash}}
+        and
+        (
+            not bool {bbx@inset}
+            or
+            test {\iffieldequalstr{entrysetcount}{1}}
+        )
+    }{#1}{#2}}
+\makeatother
+
+% Change the name format
+\DeclareNameAlias{sortname}{given-family}
+\DeclareNameAlias{default}{given-family}
+
+% Remove quotes from article titles
+\DeclareFieldFormat[article]{title}{#1}
+\DeclareFieldFormat[unpublished]{title}{#1}
+\DeclareFieldFormat[incollection]{title}{#1}
+\DeclareFieldFormat[article]{volume}{\textbf{#1}}
+\DeclareFieldFormat{volume}{Vol\adddot\space#1}
+
+% Remove pp. and format pages
+\DeclareFieldFormat{pages}{#1}
+\renewcommand*{\bibpagespunct}{\addspace}
+
+% Change order of publisher and location
+
+\renewbibmacro*{publisher+location+date}{%
+    \printlist{publisher}%
+    \setunit*{\addcomma\space}%
+    \printlist{location}%
+    \iflistundef{publisher}
+        {\setunit*{\addcomma\space}}
+        {\setunit*{\addcomma\space}}%
+    \usebibmacro{date}%
+    \newunit}
+
+\DeclareBibliographyDriver{article}{%
+    \usebibmacro{bibindex}%
+    \usebibmacro{begentry}%
+    \usebibmacro{author/translator+others}%
+    \setunit{\printdelim{nametitledelim}}\newblock
+    \usebibmacro{title}%
+    \newunit\newblock
+    \printfield{journaltitle}%
+    \iffieldundef{pubstate}
+    {% otherwise print volume, year, pages
+        \setunit{\addspace}%
+        \printfield{volume}%
+        \setunit{\addspace}%
+        \printtext{(}\printfield{year}\printtext{)}%
+        \setunit{\addspace}%
+        \printfield{pages}}%
+    {% if forthcoming, print note after journal
+        \setunit{\addcomma\space}%
+        \printfield{note}}%
+    \newunit\newblock
+    \usebibmacro{finentry}%
+}
+
+\DeclareBibliographyDriver{incollection}{%
+    \usebibmacro{bibindex}%
+    \usebibmacro{begentry}%
+    \usebibmacro{author/translator+others}%
+    \setunit{\printdelim{nametitledelim}}\newblock
+    \usebibmacro{title}%
+    \newunit
+    \printtext{\bibstring{in}\intitlepunct}%
+    \printfield{booktitle}%
+    \setunit{\addcomma\space}%
+    \printfield{volume}%
+    \setunit{\addcomma\space}%
+    \printfield{pages}%
+    \newunit\newblock
+    \usebibmacro{publisher+location+date}%
+    \newunit\newblock
+    \usebibmacro{finentry}%
+  }
+
+\DeclareBibliographyDriver{book}{%
+    \usebibmacro{bibindex}%
+    \usebibmacro{begentry}%
+    \usebibmacro{author/editor}%
+    \setunit{\printdelim{nametitledelim}}\newblock
+    \usebibmacro{title}%
+    \setunit{\addcomma\space}%
+    \printfield{volume}%
+    \setunit{\addcomma\space}%
+    \printfield{edition}%
+    \newunit\newblock
+    \usebibmacro{publisher+location+date}%
+    \newunit\newblock
+    \usebibmacro{addendum+pubstate}%
+    \setunit{\bibpagerefpunct}\newblock
+    \usebibmacro{pageref}%
+    \newunit\newblock
+    \usebibmacro{finentry}%
+}
+
+\DeclareBibliographyDriver{unpublished}{%
+    \usebibmacro{bibindex}%
+    \usebibmacro{begentry}%
+    \usebibmacro{author/translator+others}%
+    \setunit{\printdelim{nametitledelim}}\newblock
+    \usebibmacro{title}%
+    \newunit\newblock
+    \printfield{note}%
+    \setunit{\addcomma\space}%
+    \printfield{year}%
+    \newunit\newblock
+    \usebibmacro{finentry}%
+}
